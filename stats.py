@@ -1,7 +1,14 @@
 
 import re
+import sys
 
-filepath = "books/frankenstein.txt"
+#print(f"--sys--:{sys.orig_argv[2]}")
+
+if len(sys.argv) < 2:
+  print("Usage: python3 main.py <path_to_book>")
+  sys.exit(1)
+
+filepath = sys.orig_argv[2]
 
 def get_book_text(filepath):
   with open(filepath) as f:
@@ -22,7 +29,7 @@ def count_words(book_content):
   num_words = book_content.count(" ") # I guess, it has to be very strict .txt ... I wonder
   split_list = book_content.split()
   #print(num_words, " & ", len(split_list), " & ",num_words + 1 == len(split_list))
-  return f"{len(split_list)} words found in the document"
+  return f"{len(split_list)} total words found in the document"
 
 def into_aSet(book_content):
   lower_cases = book_content.lower()
@@ -30,8 +37,11 @@ def into_aSet(book_content):
   replaced_chars2 = re.sub(r"[\_\d]+", " ", replaced_chars1)
   split_list = replaced_chars2.split()
   aSet = set(split_list)
-  print(aSet)
-  return len(aSet) # number of words
+  #print(aSet)
+  return len(aSet) # number set of unique words
+
+def sort_crit(key):
+  return list(key.values())[0]
 
 def count_chars(book_content):
   lower_cases = book_content.lower()
@@ -47,4 +57,8 @@ def count_chars(book_content):
       if char == key:
         char_count[f"{char}"] += 1
         continue
-  return char_count
+  charC_list = []
+  for kvpair in char_count:
+    charC_list.append({kvpair: char_count[kvpair]})
+  charC_list.sort(reverse=True, key=sort_crit)
+  return charC_list
